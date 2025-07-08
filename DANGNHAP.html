@@ -1,0 +1,104 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GTDLL - Không gian đọc sách</title>
+  <link rel="stylesheet" href="{% static 'user1/css/DANGNHAP.css' %}">
+  <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+</head>
+<body>
+
+  <div class="container" id="container">
+    <!-- FORM ĐĂNG KÝ -->
+    <div class="form-container sign-up-container">
+      <form action="{% url 'register' %}" method="POST">
+        {% csrf_token %}
+        <h1>ĐĂNG KÝ</h1>
+        <div class="input-box">
+          <input type="text" name="username" placeholder="TÀI KHOẢN" required />
+          <i class='bx bxs-user'></i>
+        </div>
+        <div class="input-box">
+          <input type="email" name="email" placeholder="EMAIL" required />
+          <i class='bx bxs-envelope'></i>
+        </div>
+        <div class="input-box">
+          <input type="password" name="password" placeholder="MẬT KHẨU" required />
+          <i class='bx bxs-lock-alt'></i>
+        </div>
+        <button class="btn" type="submit">ĐĂNG KÝ</button>
+        <button class="btn" type="button" id="face-register-btn">Đăng ký bằng khuôn mặt</button>
+        <p>hoặc đăng ký bằng</p>
+        <div class="social-icons">
+          <a href="#"><i class='bx bxl-google'></i></a>
+          <a href="#"><i class='bx bxl-facebook'></i></a>
+          <a href="#"><i class='bx bxl-github'></i></a>
+          <a href="#"><i class='bx bxl-linkedin'></i></a>
+        </div>
+      </form>
+    </div>
+
+    <!-- FORM ĐĂNG NHẬP -->
+    <div class="form-container sign-in-container">
+      <form action="{% url 'login' %}" method="POST">
+        {% csrf_token %}
+        <h1>ĐĂNG NHẬP</h1>
+        <div class="input-box">
+          <input type="text" name="username" placeholder="TÀI KHOẢN" required />
+          <i class='bx bx-user'></i>
+        </div>
+        <div class="input-box">
+          <input type="password" name="password" placeholder="MẬT KHẨU" required />
+          <i class='bx bx-lock'></i>
+        </div>
+        <div class="forgot-link">
+          <a href="#">BẠN QUÊN MẬT KHẨU?</a>
+        </div>
+        <button class="btn" type="submit">ĐĂNG NHẬP</button>
+        <button class="btn" type="button" id="face-login-btn">Đăng nhập bằng khuôn mặt</button>
+        <p>hoặc đăng nhập bằng</p>
+        <div class="social-icons">
+          <a href="#"><i class='bx bxl-google'></i></a>
+          <a href="#"><i class='bx bxl-facebook'></i></a>
+          <a href="#"><i class='bx bxl-github'></i></a>
+          <a href="#"><i class='bx bxl-linkedin'></i></a>
+        </div>
+      </form>
+    </div>
+
+    <!-- Modal nhận diện khuôn mặt -->
+    <div id="face-modal" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.5); align-items:center; justify-content:center; z-index:9999;">
+      <div style="background:#fff; padding:20px; border-radius:8px; text-align:center;">
+        <h2>Nhận diện khuôn mặt</h2>
+        <video id="face-video" width="320" height="240" autoplay playsinline style="border-radius:8px; border:1px solid #ccc;"></video>
+        <br>
+        <button id="capture-face-btn" class="btn">Xác nhận</button>
+        <button id="close-face-modal" class="btn ghost">Đóng</button>
+      </div>
+  </div>
+
+    <!-- OVERLAY -->
+    <div class="overlay-container">
+      <div class="overlay">
+        <div class="overlay-panel overlay-right">
+          <h1>Xin chào!</h1>
+          <p>Bạn chưa có tài khoản? Hãy đăng ký ngay!</p>
+          <button class="btn ghost" id="signUp">ĐĂNG KÝ</button> 
+        </div>
+        <div class="overlay-panel overlay-left">
+          <h1>Chào mừng trở lại!</h1>
+          <p>Đăng nhập để tiếp tục sử dụng dịch vụ</p>
+          <button class="btn ghost" id="signIn">ĐĂNG NHẬP</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="{% static 'user1/js/DANGNHAP.js' %}"></script>
+  <input type="hidden" id="csrf_token" value="{{ csrf_token }}">
+
+</body>
+</html>

@@ -1,0 +1,798 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>GTDLL - Không gian đọc sách</title>
+  <link rel="stylesheet" href="{% static 'user1/css/TRANGCHU.css' %}">
+</head>
+<body>
+  <div class="sidebar">
+    <div class="profile">
+      <img src="{% static 'user1/images/28.jpg' %}" alt="avatar">
+      <p>buddy system</p>
+    </div>
+    <div class="menu-section">
+      <p class="menu-title">Your Favorite</p>
+      <ul>
+        <li><a href="{% url 'trangchu' %}">🏠 Trang chủ</a></li>
+        <li><a href="{% url 'danhmucsach' %}">📚 Danh mục sách</a></li>
+         <li><a href="{% url 'themsach' %}">🔍 Thêm sách</a></li>
+         <li><a href="{% url 'lichsu' %}">🕓 Lịch sử mượn</li>
+         <li class="active">📝 Cập nhật</a></li>
+      </ul>
+
+      <p class="menu-title">Your List</p>
+      <ul>
+        <li>📖 Biography</li>
+        <li>📘 Read Story</li>
+        <li>🤫 Quiet</li>
+      </ul>
+       
+      <p class="menu-title">Your Collection</p>
+      <ul class="collection">
+        <li>
+             <a href="{% url 'tu_duy_chi_tiet' %}">
+             <img src="{% static 'user1/images/20.jpg' %}" alt="Ảnh sách" width="200">
+             Tư duy nhanh và chậm
+             </a>
+        </li>
+        <li>
+             <a href="{% url 'sach_thep' %}">
+             <img src="{% static 'user1/images/16.jpg' %}" alt="Ảnh sách" width="200">
+             Thép đã tôi thế đấy
+             </a>
+        </li>
+        <li>
+             <a href="{% url 'tu_tot_den_vi_dai' %}">
+             <img src="{% static 'user1/images/27.jpg' %}" alt="Ảnh sách" width="200">
+             Từ tốt đến vĩ đại
+             </a>
+        </li>
+        <li>
+             <a href="{% url 'luoc_su_tg' %}">
+             <img src="{% static 'user1/images/a4.jpg' %}" alt="Ảnh sách" width="200">
+             Lược sử thời gian
+             </a>
+        </li>
+       <li>
+             <a href="{% url 'code' %}">
+             <img src="{% static 'user1/images/11.jpg' %}" alt="Ảnh sách" width="200">
+             Code Complete
+             </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="top-bar">
+      <div class="search-bar">
+        <input list="bookList" id="searchInput" placeholder="Tìm kiếm">
+        <datalist id="bookList">
+          <option value="Dấn thân">
+          <option value="Tôi tài giỏi, bạn cũng thế!">
+          <option value="Đắc Nhân Tâm">
+          <option value="Tuổi trẻ đáng giá bao nhiêu">
+          <option value="Nhà giả kim">
+          <option value="Muôn kiếp nhân sinh">
+        </datalist>
+        <button onclick="searchBook()">Tìm kiếm</button>
+      </div>
+      <div class="logo">GTDLL</div>
+    </div>
+
+
+
+    <div class="banner">
+          <img src="{% static 'user1/images/26.jpg' %}" alt="banner">
+          <div class="overlay"></div>
+          <div class="banner-text">
+          <h2>Chào mừng đến với GTDLL</h2>
+         <p>Không gian đọc dành riêng cho bạn - khám phá kho tàng tri thức nhân loại.</p>
+         </div>
+     </div>
+
+    <div class="section">
+  <h2 style="margin-top: 20px;">Sách tồn trong kho</h2>
+  <table id="bangSach" border="1" cellpadding="10" cellspacing="0" style="width: 100%; border-collapse: collapse; margin-bottom: 0px;">
+    <thead style="background-color: #333; color: white;">
+      <tr>
+        <th>Mã sách</th>
+        <th>Tên sách</th>
+        <th>Tác giả</th>
+        <th>Nhà xuất bản</th>
+        <th>Số lượng tồn</th>
+        <th>Hành động</th> 
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+</div>
+
+<script>
+fetch("{% url 'lay_sach' %}")
+  .then(response => response.json())
+  .then(data => {
+    const tbody = document.querySelector('#bangSach tbody');
+    data.forEach(sach => {
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td>${sach.ma_sach}</td>
+        <td>${sach.ten_sach}</td>
+        <td>${sach.tac_gia}</td>
+        <td>${sach.nha_xuat_ban}</td>
+        <td>${sach.so_luong}</td>
+        <td>
+          <button onclick="suaSach(this)">Sửa</button>
+          <button onclick="xoaSach('${sach.ma_sach}', this)">Xóa</button>
+        </td>
+      `;
+      tbody.appendChild(row);
+    });
+  });
+
+function xoaSach(maSach, button) {
+  if (confirm('Bạn có chắc muốn xóa sách này?')) {
+    fetch('/xoa_sach/', {
+      method: 'POST',
+      headers: { 
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'X-CSRFToken': csrftoken
+      },
+      body: 'ma_sach=' + encodeURIComponent(maSach)
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data === 'success') {
+        alert('✅ Xóa sách thành công!');
+        button.closest('tr').remove();
+      } else {
+        alert('❌ Xóa sách thất bại!');
+      }
+    })
+    .catch(error => {
+      alert('❌ Đã xảy ra lỗi!');
+      console.error('Lỗi fetch:', error);
+    });
+  }
+}
+
+
+
+// Hàm sửa sách
+function suaSach(button) {
+  const row = button.closest('tr');
+  const cells = row.querySelectorAll('td');
+
+  // Lưu giá trị cũ
+  const ma_sach = cells[0].innerText;
+  const ten_sach = cells[1].innerText;
+  const tac_gia = cells[2].innerText;
+  const nha_xuat_ban = cells[3].innerText;
+  const so_luong = cells[4].innerText;
+
+  // Chuyển các ô sang input
+  cells[1].innerHTML = `<input value="${ten_sach}">`;
+  cells[2].innerHTML = `<input value="${tac_gia}">`;
+  cells[3].innerHTML = `<input value="${nha_xuat_ban}">`;
+  cells[4].innerHTML = `<input type="number" value="${so_luong}">`;
+  cells[5].innerHTML = `
+    <button onclick="luuSua(this, '${ma_sach}')">Lưu</button>
+    <button onclick="location.reload()">Hủy</button>
+  `;
+}
+
+function luuSua(button, ma_sach) {
+  const row = button.closest('tr');
+  const inputs = row.querySelectorAll('input');
+
+  const ten_sach = inputs[0].value;
+  const tac_gia = inputs[1].value;
+  const nha_xuat_ban = inputs[2].value;
+  const so_luong = inputs[3].value;
+
+  fetch("/api/sua_sach/", {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: new URLSearchParams({
+      ma_sach,
+      ten_sach,
+      tac_gia,
+      nha_xuat_ban,
+      so_luong
+    })
+  })
+  .then(res => res.text())
+  .then(data => {
+    if (data.trim() === 'success') {
+      alert('Cập nhật thành công');
+      location.reload();
+    } else {
+      alert('Cập nhật thành công: ' + data);
+    }
+  });
+}
+</script>
+
+
+<!-- SACH DA THEM -->
+ <h2 style="margin-top: 20px;">Sách đã thêm</h2>
+  <table id="bangSach1" border="1" cellpadding="10" cellspacing="0" style="width: 100%; border-collapse: collapse; margin-bottom: 0px;">
+    <thead style="background-color: #333; color: white;">
+      <tr>
+        <th>Mã sách</th>
+        <th>Tên sách</th>
+        <th>Tác giả</th>
+        <th>Mô tả</th>
+        <th>Đánh giá</th>
+        <th>Ngày xuất bản</th>
+        <th>Hành động</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+<!-- </div> -->
+
+<script>
+fetch("/api/lay_sach_them/")
+  .then(response => response.json())
+  .then(data => {
+    const tbody = document.querySelector('#bangSach1 tbody');
+    data.forEach(sach => {
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td>${sach.ma_sach}</td>
+        <td>${sach.ten_sach}</td>
+        <td>${sach.tac_gia}</td>
+        <td>${sach.mo_ta}</td>
+        <td>${sach.danh_gia}</td>
+        <td>${sach.ngay_xuat_ban}</td>
+        <td>
+          <button onclick="suaSach1(this)">Sửa</button>
+          <button onclick="xoaSach1('${sach.ma_sach}', this)">Xóa</button>
+        </td>
+      `;
+      tbody.appendChild(row);
+    });
+  })
+  .catch(error => {
+    console.error('Lỗi khi tải dữ liệu sách:', error);
+  });
+function xoaSach1(ma_sach, button) {
+  if (confirm('Bạn có chắc muốn xóa sách này?')) {
+    fetch("/api/xoa_sach_them/", {
+      method: 'POST',
+      headers: { 
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'X-CSRFToken': csrftoken
+      },
+      body: 'ma_sach=' + encodeURIComponent(ma_sach)
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data === 'success') {
+        alert('✅ Xóa sách thành công!');
+        button.closest('tr').remove();
+      } else {
+        alert('❌ Xóa sách thất bại!');
+      }
+    })
+    .catch(error => {
+      alert('❌ Đã xảy ra lỗi!');
+      console.error('Lỗi fetch:', error);
+    });
+  }
+}
+
+{% comment %} // Hàm XÓA
+function xoaSach1(ma_sach, button) {
+  if (confirm('Bạn có chắc muốn xóa sách này?')) {
+    fetch("/api/xoa_sach_them/", {
+      method: 'POST',
+      headers: { 
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'X-CSRFToken': csrftoken // nếu cần thêm CSRF
+      },
+      body: 'ma_sach=' + encodeURIComponent(ma_sach)
+    })
+    .then(res => res.text())
+    .then(data => {
+      if (data.trim() === 'success') {
+        alert('✅ Xóa thành công!');
+        button.closest('tr').remove();  // XÓA DÒNG NGAY
+      } else {
+        alert('❌ Xóa thất bại: ' + data);
+      }
+    })
+    .catch(error => {
+      alert('❌ Lỗi kết nối!');
+      console.error(error);
+    });
+  }
+} {% endcomment %}
+
+// Hàm SỬA
+function suaSach1(button) {
+  const row = button.closest('tr');
+  const cells = row.querySelectorAll('td');
+
+  const ma_sach = cells[0].innerText;
+  const ten_sach = cells[1].innerText;
+  const tac_gia = cells[2].innerText;
+  const mo_ta = cells[3].innerText;
+  const danh_gia = cells[4].innerText;
+  const ngay_xuat_ban = cells[5].innerText;
+
+  cells[1].innerHTML = `<input value="${ten_sach}">`;
+  cells[2].innerHTML = `<input value="${tac_gia}">`;
+  cells[3].innerHTML = `<input value="${mo_ta}">`;
+  cells[4].innerHTML = `<input value="${danh_gia}">`;
+  cells[5].innerHTML = `<input type="date" value="${ngay_xuat_ban}">`;
+  cells[6].innerHTML = `
+    <button onclick="luuSuaSach1(this, '${ma_sach}')">Lưu</button>
+    <button onclick="location.reload()">Hủy</button>
+  `;
+}
+
+function luuSuaSach1(button, ma_sach) {
+  const row = button.closest('tr');
+  const inputs = row.querySelectorAll('input');
+
+  const ten_sach = inputs[0].value;
+  const tac_gia = inputs[1].value;
+  const mo_ta = inputs[2].value;
+  const danh_gia = inputs[3].value;
+  const ngay_xuat_ban = inputs[4].value;
+
+  fetch("{% url 'sua_sach_them' %}", {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+  body: new URLSearchParams({
+    ma_sach,
+    ten_sach,
+    tac_gia,
+    mo_ta,
+    danh_gia,
+    ngay_xuat_ban
+  })
+})
+.then(res => res.text())
+.then(data => {
+  if (data.trim() === 'success') {
+    alert('Cập nhật thành công');
+    location.reload();
+  } else {
+    alert('Cập nhật thành công: ' + data);
+  }
+});
+}
+</script>
+<!-- DANH MUC SACH -->
+      <h2>Danh mục sách</h2>
+      <div class="category-grid">
+        <div class="category-box">📖 Khoa học</div>
+        <div class="category-box">📘 Kinh tế</div>
+        <div class="category-box">📕 Lịch sử</div>
+        <div class="category-box">📗 Tâm lý - Kỹ năng</div>
+        <div class="category-box">📓 Văn học</div>
+        <div class="category-box">📒 Công nghệ</div>
+        <div class="category-box">📙 Thiếu nhi</div>
+        <div class="category-box">📔 Tiểu sử - Hồi ký</div>
+      </div>
+    <div class="section">
+  <h2>Sách nổi bật</h2>
+  <div class="book-grid">
+    <div class="book-box">
+  <img src="{% static 'user1/images/images/Untitled-2.png' %}" alt="Bìa sách 1">
+  <h3>Dấn thân</h3>
+  <p>Cuốn sách truyền cảm hứng về sự nghiệp và cuộc sống.</p>
+  <button>Đọc sách</button>
+</div>
+
+<div class="book-box">
+  <img src="{% static 'user1/images/24.jpg' %}" alt="Bìa sách 2">
+  <h3>Nhà giả kim</h3>
+  <p>Hành trình theo đuổi ước mơ của chàng trai chăn cừu.</p>
+  <button>Đọc sách</button>
+</div>
+
+<div class="book-box">
+  <img src="{% static 'user1/images/images/Untitled-1.png' %}" alt="Bìa sách 3">
+  <h3>Chuông</h3>
+  <p>Câu chuyện tuổi thơ sâu lắng ở làng quê Việt Nam.</p>
+  <button>Đọc sách</button>
+</div>
+
+<div class="book-box">
+  <img src="{% static 'user1/images/images/Untitled-4.png' %}" alt="Bìa sách 4">
+  <h3>Đắc nhân tâm</h3>
+  <p>Bí quyết xây dựng các mối quan hệ thành công.</p>
+  <button>Đọc sách</button>
+</div>
+
+<div class="book-box">
+  <img src="{% static 'user1/images/images/Untitled-3.png' %}" alt="Bìa sách 5">
+  <h3>Tuổi trẻ đáng giá bao nhiêu</h3>
+  <p>Cẩm nang để tận hưởng và phát triển bản thân.</p>
+  <button>Đọc sách</button>
+</div>
+
+<div class="book-box">
+  <img src="{% static 'user1/images/images/Untitled-19.png' %}" alt="Bìa sách 6">
+  <h3>Sapiens</h3>
+  <p>Lược sử loài người qua các thời kỳ phát triển.</p>
+  <button>Đọc sách</button>
+</div>
+
+<div class="book-box">
+  <img src="{% static 'user1/images/images/Untitled-8.png' %}" alt="Bìa sách 7">
+  <h3>Cha giàu cha nghèo</h3>
+  <p>Bí quyết làm giàu và quản lý tài chính cá nhân.</p>
+  <button>Đọc sách</button>
+</div>
+
+<div class="book-box">
+  <img src="{% static 'user1/images/images/Untitled-9.png' %}" alt="Bìa sách 8">
+  <h3>Thiên nga đen</h3>
+  <p>Khám phá cách suy nghĩ của những người thành đạt.</p>
+  <button>Đọc sách</button>
+</div>
+
+<div class="book-box">
+  <img src="{% static 'user1/images/images/Untitled-5.png' %}" alt="Bìa sách 9">
+  <h3>7 thói quen để thành đạt</h3>
+  <p>Tiếp tục hành trình tìm kiếm ước mơ và chân lý.</p>
+  <button>Đọc sách</button>
+</div>
+
+<div class="book-box">
+  <img src="{% static 'user1/images/images/Untitled-6.png' %}" alt="Bìa sách 10">
+  <h3>Tư duy nhanh - chậm</h3>
+  <p>Những bài học giúp bạn vươn tới đỉnh cao.</p>
+  <button>Đọc sách</button>
+</div>
+
+<div class="book-box">
+  <img src="{% static 'user1/images/images/Untitled-7.png' %}" alt="Bìa sách 11">
+  <h3>Quẳng gánh lo đi</h3>
+  <p>Phân tích hành vi và suy nghĩ tập thể của con người.</p>
+  <button>Đọc sách</button>
+</div>
+
+<div class="book-box">
+  <img src="{% static 'user1/images/images/Untitled-10.png' %}" alt="Bìa sách 12">
+  <h3>Từ tốt đến vĩ đại</h3>
+  <p>Chia sẻ những trải nghiệm về triết học phương Đông.</p>
+  <button>Đọc sách</button>
+</div>
+
+<div class="book-box">
+  <img src="{% static 'user1/images/images/Untitled-11.png' %}" alt="Bìa sách 13">
+  <h3>Tuần làm việc 4 giờ</h3>
+  <p>Thời gian làm việc đạt hiệu quả trong tuần.</p>
+  <button>Đọc sách</button>
+</div>
+
+<div class="book-box">
+  <img src="{% static 'user1/images/images/Untitled-12.png' %}" alt="Bìa sách 14">
+  <h3>Chợp mắt</h3>
+  <p>Giấc ngủ ngắn chất lượng có thể cải thiện sức khỏe.</p>
+  <button>Đọc sách</button>
+</div>
+
+<div class="book-box">
+  <img src="{% static 'user1/images/images/Untitled-13.png' %}" alt="Bìa sách 15">
+  <h3>Ngưng lãng phí thời gian</h3>
+  <p>Hướng dẫn tập trung và quản lý thời gian.</p>
+  <button>Đọc sách</button>
+</div>
+
+<div class="book-box">
+  <img src="{% static 'user1/images/images/Untitled-14.png' %}" alt="Bìa sách 16">
+  <h3>Sống hạnh phúc</h3>
+  <p>Chia sẻ cách tìm sự hài hòa giữa công việc và cuộc sống.</p>
+  <button>Đọc sách</button>
+</div>
+
+<div class="book-box">
+  <img src="{% static 'user1/images/images/Untitled-15.png' %}" alt="Bìa sách 17">
+  <h3>Harry Potter</h3>
+  <p>Harry Potter chiến đấu chống Voldemort bảo vệ thế giới phép thuật.</p>
+  <button>Đọc sách</button>
+</div>
+
+<div class="book-box">
+  <img src="{% static 'user1/images/images/Untitled-16.png' %}" alt="Bìa sách 18">
+  <h3>Khoảng khắc thức tỉnh</h3>
+  <p>Giúp nhận ra bản ngã và sống tỉnh thức.</p>
+  <button>Đọc sách</button>
+</div>
+
+<div class="book-box">
+  <img src="{% static 'user1/images/images/Untitled-17.png' %}" alt="Bìa sách 19">
+  <h3>Vũ trụ</h3>
+  <p>Giải mã vũ trụ qua thuyết tương đối và lượng tử.</p>
+  <button>Đọc sách</button>
+</div>
+
+<div class="book-box">
+  <img src="{% static 'user1/images/images/Untitled-18.png' %}" alt="Bìa sách 20">
+  <h3>Lược sử thời gian</h3>
+  <p>Giải thích nguồn gốc và cấu trúc vũ trụ.</p>
+  <button>Đọc sách</button>
+</div>
+
+<div class="book-box">
+  <img src="{% static 'user1/images/images/Untitled-20.png' %}" alt="Bìa sách 21">
+  <h3>Lược sử tương lai</h3>
+  <p>Dự báo tương lai nhân loại và thế giới.</p>
+  <button>Đọc sách</button>
+</div>
+
+<div class="book-box">
+  <img src="{% static 'user1/images/images/Untitled-21.png' %}" alt="Bìa sách 22">
+  <h3>Đi tìm lẽ sống</h3>
+  <p>Tìm ý nghĩa và mục đích cuộc sống.</p>
+  <button>Đọc sách</button>
+</div>
+
+<div class="book-box">
+  <img src="{% static 'user1/images/images/Untitled-23.png' %}" alt="Bìa sách 23">
+  <h3>Bên thắng cuộc</h3>
+  <p>Kể câu chuyện đấu tranh và chiến thắng.</p>
+  <button>Đọc sách</button>
+</div>
+
+<div class="book-box">
+  <img src="{% static 'user1/images/images/Untitled-24.png' %}" alt="Bìa sách 24">
+  <h3>The Pragmatic</h3>
+  <p>Phát triển phần mềm hiệu quả và thực tế.</p>
+  <button>Đọc sách</button>
+</div>
+
+<div class="book-box">
+  <img src="{% static 'user1/images/images/Untitled-25.png' %}" alt="Bìa sách 25">
+  <h3>Tư duy truy tìm sự thật</h3>
+  <p>Hiểu cảm xúc, sống thật với bản thân.</p>
+  <button>Đọc sách</button>
+</div>
+
+<div class="book-box">
+  <img src="{% static 'user1/images/images/Untitled-27.png' %}" alt="Bìa sách 26">
+  <h3>The Daily Stoic</h3>
+  <p>Sống khôn ngoan và điềm tĩnh mỗi ngày.</p>
+  <button>Đọc sách</button>
+</div>
+
+<div class="book-box">
+  <img src="{% static 'user1/images/images/Untitled-28.png' %}" alt="Bìa sách 27">
+  <h3>ALGORITHMS</h3>
+  <p>Giải thích cách thiết kế và phân tích thuật toán hiệu quả.</p>
+  <button>Đọc sách</button>
+</div>
+
+<div class="book-box">
+  <img src="{% static 'user1/images/images/Untitled-29.png' %}" alt="Bìa sách 28">
+  <h3>Search</h3>
+  <p>Hành trình khám phá khoa học và con người.</p>
+  <button>Đọc sách</button>
+</div>
+
+<div class="book-box">
+  <img src="{% static 'user1/images/images/Untitled-30.png' %}" alt="Bìa sách 29">
+  <h3>Clean code</h3>
+  <p>Dạy cách viết mã nguồn rõ ràng, dễ đọc và bảo trì.</p>
+  <button>Đọc sách</button>
+</div>
+
+<div class="book-box">
+  <img src="{% static 'user1/images/images/Untitled-33.png' %}" alt="Bìa sách 30">
+  <h3>The Ocean</h3>
+  <p>Kết nối sâu sắc giữa con người và biển.</p>
+  <button>Đọc sách</button>
+</div>
+  </div>
+  <script>
+// --- Lấy CSRF token từ cookie ---
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let cookie of cookies) {
+            cookie = cookie.trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+const csrftoken = getCookie('csrftoken');
+
+// --- Hàm xoá sách ---
+function xoaSach(ma_sach) {
+    fetch('/xoa_sach/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'X-CSRFToken': csrftoken
+        },
+        body: 'ma_sach=' + encodeURIComponent(ma_sach)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data === 'success') {
+            alert('✅ Xóa sách thành công!');
+            location.reload(); // Cập nhật lại danh sách nếu cần
+        } else {
+            alert('❌ Xóa sách thành công!');
+        }
+    })
+    .catch(error => {
+        console.error('Lỗi:', error);
+        alert('❌ Đã xảy ra lỗi!');
+    });
+}
+</script>
+  <script>
+    function searchBook() {
+      const query = document.getElementById('searchInput').value.trim().toLowerCase();
+
+      // Xóa class 'found' ở tất cả tiêu đề sách trước
+      document.querySelectorAll('.book-grid h3').forEach(el => {
+        el.classList.remove('found');
+      });
+
+      if (!query) {
+        alert("Vui lòng nhập tên sách để tìm kiếm!");
+        return;
+      }
+
+      // Tìm các tiêu đề sách và so sánh
+      const titles = document.querySelectorAll('.book-grid h3');
+      let found = false;
+
+      titles.forEach(title => {
+        if (title.textContent.trim().toLowerCase() === query) {
+          title.classList.add('found');
+          title.scrollIntoView({behavior: "smooth", block: "center"});
+          alert("Đã tìm thấy sách: " + title.textContent);
+          found = true;
+        }
+      });
+
+      if (!found) {
+        alert("Không tìm thấy sách!");
+      }
+    }
+  </script>
+</div>
+
+<footer>
+      <div class="footer-row">
+        <div>
+          <h4>About</h4>
+          <p>About GTDLL</p>
+          <p>How it works</p>
+          <p>Careers</p>
+        </div>
+        <div>
+          <h4>Partner with us</h4>
+          <p>Affiliate program</p>
+          <p>Promotions</p>
+        </div>
+        <div>
+          <h4>Support</h4>
+          <p>Help Center</p>
+          <p>Feedback</p>
+        </div>
+        <div>
+          <h4>Get the app</h4>
+          <img src="{% static 'user1/images/app.jpg' %}" alt="App Store">
+          <img src="{% static 'user1/images/gg.jpg' %}" alt="Google Play">
+        </div>
+      </div>
+      <p class="copyright">© 2025 GTDLL Incorporated</p>
+    </footer>
+  </div>
+  </div>
+
+  <style>
+    .category-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      padding: 20px;
+    }
+
+    .category-box {
+      background-color: #444;
+      color: white;
+      text-align: center;
+      padding: 30px 10px;
+      border-radius: 10px;
+      font-size: 18px;
+      font-weight: bold;
+      transition: background-color 0.3s;
+      cursor: pointer;
+    }
+
+    .category-box:hover {
+      background-color: #666;
+    }
+
+    .sidebar ul li a {
+      text-decoration: none;
+      color: white;
+      display: block;
+      padding: 8px;
+      border-radius: 6px;
+    }
+
+    .sidebar ul li a:hover {
+      background-color: #1b0cc3;
+    }
+
+    .sidebar ul li.active a {
+      background-color: #0f34db;
+    }
+    .book-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 25px;
+  padding: 20px;
+}
+
+.book-box {
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  text-align: center;
+  padding: 15px;
+  transition: transform 0.2s;
+}
+
+.book-box:hover {
+  transform: translateY(-5px);
+}
+
+.book-box img {
+  width: 100%;
+  height: auto;
+  border-radius: 6px;
+}
+
+.book-box h3 {
+  margin: 10px 0 5px;
+  font-size: 1.1em;
+  color: #333;
+}
+.book-box h3.found {
+      color: #0f34db; /* màu xanh dương khi tìm thấy */
+      font-weight: bold;
+    }
+
+.book-box p {
+  font-size: 0.95em;
+  color: #666;
+  margin-bottom: 10px;
+}
+
+.book-box button {
+  background-color: #4a6c6f;
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.book-box button:hover {
+  background-color: #3a5557;
+}
+
+  </style>
+</body>
+</html>

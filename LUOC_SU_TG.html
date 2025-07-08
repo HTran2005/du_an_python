@@ -1,0 +1,150 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>GTDLL - Không gian đọc sách</title>
+  <link rel="stylesheet" href="{% static 'user1/css/TRANGCHU.css' %}">
+
+</head>
+<body>
+  <div class="sidebar">
+    <div class="profile">
+      <img src="{% static 'user1/images/28.jpg' %}" alt="avatar">
+      <p>buddy system</p>
+    </div>
+    <div class="menu-section">
+      <p class="menu-title">Your Favorite</p>
+      <ul>
+        <li><a href="{% url 'trangchu' %}">🏠 Trang chủ</a></li>
+         <li><a href="{% url 'danhmucsach' %}">📚 Danh mục sách</a></li>
+         <li><a href="{% url 'themsach' %}">🔍 Thêm sách</a></li>
+         <li><a href="{% url 'lichsu' %}">🕓 Lịch sử mượn</a></li>
+         <li><a href="{% url 'capnhat' %}">📝 Cập nhật</a></li>
+      </ul>
+
+      <p class="menu-title">Your List</p>
+      <ul>
+        <li>📖 Biography</li>
+        <li>📘 Read Story</li>
+        <li>🤫 Quiet</li>
+      </ul>
+       
+      <p class="menu-title">Your Collection</p>
+      <ul class="collection">
+        <li>
+             <a href="{% url 'tu_duy_chi_tiet' %}">
+             <img src="{% static 'user1/images/20.jpg' %}" alt="Ảnh sách" width="200">
+             Tư duy nhanh và chậm
+             </a>
+        </li>
+        <li>
+             <a href="{% url 'sach_thep' %}">
+             <img src="{% static 'user1/images/16.jpg' %}" alt="Ảnh sách" width="200">
+             Thép đã tôi thế đấy
+             </a>
+        </li>
+        <li>
+             <a href="{% url 'tu_tot_den_vi_dai' %}">
+             <img src="{% static 'user1/images/27.jpg' %}" alt="Ảnh sách" width="200">
+             Từ tốt đến vĩ đại
+             </a>
+        </li>
+        <li>
+             <a href="{% url 'luoc_su_tg' %}">
+             <img src="{% static 'user1/images/a4.jpg' %}" alt="Ảnh sách" width="200">
+             Lược sử thời gian
+             </a>
+        </li>
+       <li>
+             <a href="{% url 'code' %}">
+             <img src="{% static 'user1/images/11.jpg' %}" alt="Ảnh sách" width="200">
+             Code Complete
+             </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+  <div class="main">
+    <div class="top-bar">
+      <div class="search-bar">
+        <input list="bookList" id="searchInput" placeholder="Tìm kiếm">
+<datalist id="bookList">
+  <option value="Hiểu về trái tim">
+  <option value="Tuần làm việc 4 giờ">
+  <option value="Thiên Nga Đen">
+  <option value="Vũ trụ trong vỏ hạt đậu">
+  <option value="Clean code">
+  <option value="Đi tìm lẽ sống">
+</datalist>
+<button onclick="searchBooks()">Tìm kiếm</button>
+      </div>
+      <div class="logo">GTDLL</div>
+    </div>
+
+    <div class="banner">
+          <img src="{% static 'user1/images/26.jpg' %}" alt="banner">
+          <div class="overlay"></div>
+          <div class="banner-text">
+          <h2>Chào mừng đến với GTDLL</h2>
+         <p>Không gian đọc dành riêng cho bạn - khám phá kho tàng tri thức nhân loại.</p>
+         </div>
+     </div>
+  <style>
+    .container {
+      max-width: 1500px;
+      margin: auto;
+      padding: 30px;
+      background: #fdfdfd;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    img {
+      width: 250px;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container" style="max-width: 1500px; margin: auto; padding: 30px; text-align: center;">
+  <h1 style="font-size: 2em; margin-bottom: 20px;">Lược sử thời gian</h1>
+  
+  <img src="{% static 'user1/images/a4.jpg' %}" alt="Lược sử thời gian" style="width: 250px; border-radius: 8px; margin-bottom: 20px;">
+  
+  <div style="text-align: left; margin-top: 20px;">
+    <p><strong>Tác giả:</strong> Stephen Hawking</p>
+    <p><strong>Nhà xuất bản:</strong> Bantam Books</p>
+    <p><strong>Ngày xuất bản:</strong> 2020-01-01</p>
+    <p><strong>Đánh giá:</strong> ★★★★</p>
+    <p><strong>Mô tả:</strong></p> <p> <em>"Lược Sử Thời Gian"</em> (1988) là một trong những cuốn sách khoa học nổi tiếng nhất thế kỷ 20, được viết bởi nhà vật lý lý thuyết thiên tài Stephen Hawking. Tác phẩm mang đến một cái nhìn tổng quan về lịch sử hình thành và phát triển của vũ trụ – từ <strong>Vụ Nổ Lớn (Big Bang)</strong>, <strong>lỗ đen</strong>, đến các <strong>hạt cơ bản nhỏ nhất</strong>. Với văn phong dễ hiểu và súc tích, Hawking đã mở ra cánh cửa khoa học vũ trụ cho hàng triệu độc giả không chuyên trên toàn thế giới. </p> <p> Cuốn sách không chỉ đơn thuần là một bản tóm tắt kiến thức vật lý thiên văn, mà còn là hành trình khám phá những câu hỏi lớn lao mà loài người từng đặt ra: </p> <ul> <li>Vũ trụ bắt nguồn từ đâu?</li> <li>Liệu nó sẽ tồn tại mãi mãi?</li> <li>Chúng ta có thể hiểu được toàn bộ quy luật vận hành của vũ trụ hay không?</li> </ul> <p> Khi người lớn dần bận rộn và mất đi sự tò mò về thế giới xung quanh, thì trẻ em – với tâm hồn hiếu kỳ – lại đặt ra những câu hỏi đơn giản nhưng đầy thách thức. Và <em>"Lược Sử Thời Gian"</em> ra đời như một cầu nối giữa khoa học và cuộc sống, giúp cả người lớn lẫn trẻ nhỏ tiếp cận những khái niệm phức tạp nhất của vật lý hiện đại một cách dễ hiểu, gần gũi. </p> <p> Đây cũng là cuốn sách đầu tiên của Stephen Hawking viết theo phong cách phổ biến khoa học, đưa ông trở thành một trong những gương mặt tiêu biểu tiếp nối di sản vĩ đại của Isaac Newton và P.A.M. Dirac. Cuốn sách không chỉ giúp người đọc hiểu sâu hơn về bản chất của không gian, thời gian và các định luật vật lý, mà còn khơi dậy sự ngưỡng mộ trước vẻ đẹp của vũ trụ. </p> <p> <em>"Lược Sử Thời Gian"</em> là món quà tri thức quý giá cho bất kỳ ai muốn mở rộng thế giới quan, khám phá vũ trụ và trả lời những câu hỏi tưởng chừng chỉ dành cho các nhà khoa học — theo cách nhẹ nhàng, dễ tiếp cận và đầy cảm hứng. </p>
+    <a href="{% url 'trangchu' %}" style="text-decoration: none; color: #007bff;">← Quay lại trang chủ</a>
+  </div>
+</div>
+  <footer>
+      <div class="footer-row">
+        <div>
+          <h4>About</h4>
+          <p>About GTDLL</p>
+          <p>How it works</p>
+          <p>Careers</p>
+        </div>
+        <div>
+          <h4>Partner with us</h4>
+          <p>Affiliate program</p>
+          <p>Promotions</p>
+        </div>
+        <div>
+          <h4>Support</h4>
+          <p>Help Center</p>
+          <p>Feedback</p>
+        </div>
+        <div>
+          <h4>Get the app</h4>
+          <img src="{% static 'user1/images/app.jpg' %}" alt="App Store">
+          <img src="{% static 'user1/images/gg.jpg' %}" alt="Google Play">
+        </div>
+      </div>
+      <p class="copyright">© 2025 GTDLL Incorporated</p>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,150 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>GTDLL - Không gian đọc sách</title>
+  <link rel="stylesheet" href="{% static 'user1/css/TRANGCHU.css' %}">
+
+</head>
+<body>
+  <div class="sidebar">
+    <div class="profile">
+      <img src="{% static 'user1/images/28.jpg' %}" alt="avatar">
+      <p>buddy system</p>
+    </div>
+    <div class="menu-section">
+      <p class="menu-title">Your Favorite</p>
+      <ul>
+        <li><a href="{% url 'trangchu' %}">🏠 Trang chủ</a></li>
+         <li><a href="{% url 'danhmucsach' %}">📚 Danh mục sách</a></li>
+         <li><a href="{% url 'themsach' %}">🔍 Thêm sách</a></li>
+         <li><a href="{% url 'lichsu' %}">🕓 Lịch sử mượn</a></li>
+         <li><a href="{% url 'capnhat' %}">📝 Cập nhật</a></li>
+      </ul>
+
+      <p class="menu-title">Your List</p>
+      <ul>
+        <li>📖 Biography</li>
+        <li>📘 Read Story</li>
+        <li>🤫 Quiet</li>
+      </ul>
+       
+      <p class="menu-title">Your Collection</p>
+      <ul class="collection">
+        <li>
+             <a href="{% url 'tu_duy_chi_tiet' %}">
+             <img src="{% static 'user1/images/20.jpg' %}" alt="Ảnh sách" width="200">
+             Tư duy nhanh và chậm
+             </a>
+        </li>
+        <li>
+             <a href="{% url 'sach_thep' %}">
+             <img src="{% static 'user1/images/16.jpg' %}" alt="Ảnh sách" width="200">
+             Thép đã tôi thế đấy
+             </a>
+        </li>
+        <li>
+             <a href="{% url 'tu_tot_den_vi_dai' %}">
+             <img src="{% static 'user1/images/27.jpg' %}" alt="Ảnh sách" width="200">
+             Từ tốt đến vĩ đại
+             </a>
+        </li>
+        <li>
+             <a href="{% url 'luoc_su_tg' %}">
+             <img src="{% static 'user1/images/a4.jpg' %}" alt="Ảnh sách" width="200">
+             Lược sử thời gian
+             </a>
+        </li>
+       <li>
+             <a href="{% url 'code' %}">
+             <img src="{% static 'user1/images/11.jpg' %}" alt="Ảnh sách" width="200">
+             Code Complete
+             </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+  <div class="main">
+    <div class="top-bar">
+      <div class="search-bar">
+        <input list="bookList" id="searchInput" placeholder="Tìm kiếm">
+<datalist id="bookList">
+  <option value="Hiểu về trái tim">
+  <option value="Tuần làm việc 4 giờ">
+  <option value="Thiên Nga Đen">
+  <option value="Vũ trụ trong vỏ hạt đậu">
+  <option value="Clean code">
+  <option value="Đi tìm lẽ sống">
+</datalist>
+<button onclick="searchBooks()">Tìm kiếm</button>
+      </div>
+      <div class="logo">GTDLL</div>
+    </div>
+
+    <div class="banner">
+          <img src="{% static 'user1/images/26.jpg' %}" alt="banner">
+          <div class="overlay"></div>
+          <div class="banner-text">
+          <h2>Chào mừng đến với GTDLL</h2>
+         <p>Không gian đọc dành riêng cho bạn - khám phá kho tàng tri thức nhân loại.</p>
+         </div>
+     </div>
+  <style>
+    .container {
+      max-width: 1500px;
+      margin: auto;
+      padding: 30px;
+      background: #fdfdfd;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    img {
+      width: 250px;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container" style="max-width: 1500px; margin: auto; padding: 30px; text-align: center;">
+  <h1 style="font-size: 2em; margin-bottom: 20px;">Code Complete</h1>
+  
+  <img src="{% static 'user1/images/11.jpg' %}" alt="Code Complete" style="width: 250px; border-radius: 8px; margin-bottom: 20px;">
+  
+  <div style="text-align: left; margin-top: 20px;">
+    <p><strong>Tác giả:</strong> Steve McConnell</p>
+    <p><strong>Nhà xuất bản:</strong> Microsoft Press</p>
+    <p><strong>Ngày xuất bản:</strong> 2020-01-01</p>
+    <p><strong>Đánh giá:</strong> ★★★★★</p>
+    <p><strong>Mô tả:</strong></p> <p> <em>“Code Complete – A Practical Handbook of Software Construction”</em> (Phiên bản thứ hai) là một trong những cuốn sách kinh điển về lập trình phần mềm, được hàng triệu lập trình viên và sinh viên công nghệ thông tin trên toàn thế giới tin tưởng và lựa chọn. Tác phẩm này cung cấp một cái nhìn toàn diện, thực tiễn và có hệ thống về quá trình xây dựng phần mềm – từ giai đoạn thiết kế, viết mã, đến kiểm thử và bảo trì. </p> <p> Cuốn sách được chia thành 6 chương lớn, tổ chức từ những kiến thức nền tảng đến nâng cao, giúp người đọc từng bước hiểu rõ và làm chủ các kỹ thuật lập trình. Các chương được liên kết chặt chẽ, tạo thành một lộ trình học tập logic, đồng thời đi kèm các bài tập thực hành giúp rèn luyện tư duy và kỹ năng coding. </p> <p> Không chỉ tập trung vào việc hướng dẫn viết mã chất lượng cao, <em>Code Complete</em> còn cung cấp những nguyên tắc quan trọng về: </p> <ul> <li>Thiết kế hệ thống và điều hướng giao diện người dùng (UI/UX)</li> <li>Phát hiện và sửa lỗi hiệu quả</li> <li>Lựa chọn cấu trúc dữ liệu và thuật toán tối ưu</li> <li>Thực hành lập trình hướng đối tượng và mô hình phát triển phần mềm</li> </ul> <p> Cuốn sách cũng đồng thời nhấn mạnh đến các <strong>kỹ năng mềm trong lập trình</strong>, như cách làm việc nhóm, kiểm soát tiến độ, và viết mã rõ ràng, dễ hiểu cho người khác cùng đọc và bảo trì. </p> <p> Với lối viết rõ ràng, nhiều ví dụ thực tiễn và lời khuyên sắc bén, <em>Code Complete</em> không chỉ phù hợp với sinh viên IT đang muốn nâng cao kỹ năng mà còn là “người bạn đồng hành” đáng tin cậy của các lập trình viên chuyên nghiệp trong hành trình phát triển sự nghiệp. </p>
+    <a href="{% url 'trangchu' %}" style="text-decoration: none; color: #007bff;">← Quay lại trang chủ</a>
+  </div>
+</div>
+  <footer>
+      <div class="footer-row">
+        <div>
+          <h4>About</h4>
+          <p>About GTDLL</p>
+          <p>How it works</p>
+          <p>Careers</p>
+        </div>
+        <div>
+          <h4>Partner with us</h4>
+          <p>Affiliate program</p>
+          <p>Promotions</p>
+        </div>
+        <div>
+          <h4>Support</h4>
+          <p>Help Center</p>
+          <p>Feedback</p>
+        </div>
+        <div>
+          <h4>Get the app</h4>
+          <img src="{% static 'user1/images/app.jpg' %}" alt="App Store">
+          <img src="{% static 'user1/images/gg.jpg' %}" alt="Google Play">
+        </div>
+      </div>
+      <p class="copyright">© 2025 GTDLL Incorporated</p>
+    </footer>
+</body>
+</html>

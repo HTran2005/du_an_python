@@ -1,0 +1,634 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>GTDLL - Không gian đọc sách</title>
+  <link rel="stylesheet" href="{% static 'user1/css/TRANGCHU.css' %}">
+</head>
+<body>
+  <div class="sidebar">
+    <div class="profile">
+      <img src="{% static 'user1/images/28.jpg' %}" alt="avatar">
+      <p>buddy system</p>
+    </div>
+    <div class="menu-section">
+      <p class="menu-title">Your Favorite</p>
+      <ul>
+        <li><a href="{% url 'trangchu' %}">🏠 Trang chủ</a></li>
+        <li><a href="{% url 'danhmucsach' %}">📚 Danh mục sách</a></li>
+         <li><a href="{% url 'themsach' %}">🔍 Thêm sách</a></li>
+         <li class="active">🕓 Lịch sử mượn</a></li>
+        <li><a href="{% url 'capnhat' %}">📝 Cập nhật</a></li>
+      </ul>
+
+      <p class="menu-title">Your List</p>
+      <ul>
+        <li>📖 Biography</li>
+        <li>📘 Read Story</li>
+        <li>🤫 Quiet</li>
+      </ul>
+       
+      <p class="menu-title">Your Collection</p>
+      <ul class="collection">
+         <li>
+             <a href="{% url 'tu_duy_chi_tiet' %}">
+             <img src="{% static 'user1/images/20.jpg' %}" alt="Ảnh sách" width="200">
+             Tư duy nhanh và chậm
+             </a>
+        </li>
+        <li>
+             <a href="{% url 'sach_thep' %}">
+             <img src="{% static 'user1/images/16.jpg' %}" alt="Ảnh sách" width="200">
+             Thép đã tôi thế đấy
+             </a>
+        </li>
+        <li>
+             <a href="{% url 'tu_tot_den_vi_dai' %}">
+             <img src="{% static 'user1/images/27.jpg' %}" alt="Ảnh sách" width="200">
+             Từ tốt đến vĩ đại
+             </a>
+        </li>
+        <li>
+             <a href="{% url 'luoc_su_tg' %}">
+             <img src="{% static 'user1/images/a4.jpg' %}" alt="Ảnh sách" width="200">
+             Lược sử thời gian
+             </a>
+        </li>
+       <li>
+             <a href="{% url 'code' %}">
+             <img src="{% static 'user1/images/11.jpg' %}" alt="Ảnh sách" width="200">
+             Code Complete
+             </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="top-bar">
+      <div class="search-bar">
+        <input list="bookList" id="searchInput" placeholder="Tìm kiếm">
+        <datalist id="bookList">
+          <option value="Dấn thân">
+          <option value="Tôi tài giỏi, bạn cũng thế!">
+          <option value="Đắc Nhân Tâm">
+          <option value="Tuổi trẻ đáng giá bao nhiêu">
+          <option value="Nhà giả kim">
+          <option value="Muôn kiếp nhân sinh">
+        </datalist>
+        <button onclick="searchBook()">Tìm kiếm</button>
+      </div>
+      <div class="logo">GTDLL</div>
+    </div>
+
+
+    <div class="banner">
+          <img src="{% static 'user1/images/26.jpg' %}" alt="banner">
+          <div class="overlay"></div>
+          <div class="banner-text">
+          <h2>Chào mừng đến với GTDLL</h2>
+         <p>Không gian đọc dành riêng cho bạn - khám phá kho tàng tri thức nhân loại.</p>
+         </div>
+     </div>
+
+    <div class="section">
+  <h2>Lịch sử mượn sách</h2>
+  <table id="borrowTable" border="1" cellpadding="30" cellspacing="0" style="width:100%; border-collapse: collapse;">
+    <thead>
+      <tr style="background-color:#444; color:white;">
+        <th>Mã sách</th>
+        <th>Tên sách</th>
+        <th>Tên khách hàng</th>
+        <th>Ngày mượn</th>
+        <th>Ngày trả</th>
+        <th>Số lượng</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for record in lich_su %}
+      <tr>
+        <td>{{ record.ma_sach }}</td>
+        <td>{{ record.ten_sach }}</td>
+        <td>{{ record.ten_khach_hang }}</td>
+        <td>{{ record.ngay_muon }}</td>
+        <td>{{ record.ngay_tra }}</td>
+        <td>{{ record.so_luong }}</td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="6">Chưa có dữ liệu mượn sách.</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  {% comment %} <button id="deleteBtn" style="padding: 16px 16px; background-color: #1067ca; color: white; border: none; border-radius: 10px; cursor: pointer;">
+  Xóa dòng được chọn
+</button> {% endcomment %}
+<div style="margin-top: 20px;">
+  <button id="deleteBtn" style="padding: 16px; background-color: #dc3545; color: white; border: none; border-radius: 10px; cursor: pointer;">
+    🗑️ Xóa dòng được chọn
+  </button>
+
+  <button id="showAddFormBtn" style="padding: 16px; background-color: #28a745; color: white; border: none; border-radius: 10px; cursor: pointer;">
+    ➕ Thêm mượn sách
+  </button>
+</div>
+
+<!-- Form thêm mới -->
+<div id="addForm" style="margin-top: 20px; display: none; background: #f2f2f2; padding: 20px; border-radius: 10px; width: 60%;">
+  <h3>📘 Thêm mượn sách</h3>
+  <label>Mã sách:</label><input type="text" id="ma_sach"><br><br>
+  <label>Tên sách:</label><input type="text" id="ten_sach"><br><br>
+  <label>Tên khách hàng:</label><input type="text" id="ten_khach"><br><br>
+  <label>Ngày mượn:</label><input type="date" id="ngay_muon"><br><br>
+  <label>Ngày trả:</label><input type="date" id="ngay_tra"><br><br>
+  <label>Số lượng:</label><input type="number" id="so_luong"><br><br>
+
+  <button id="submitAdd" style="padding: 10px 20px; background-color: #007bff; color: white; border: none; border-radius: 6px; cursor: pointer;">Lưu</button>
+  <button id="cancelAdd" style="padding: 10px 20px; margin-left: 10px; background-color: gray; color: white; border: none; border-radius: 6px; cursor: pointer;">Hủy</button>
+</div>
+
+  <h2>Danh mục sách</h2>
+  <div class="category-grid">
+    <div class="category-box">📖 Khoa học</div>
+    <div class="category-box">📘 Kinh tế</div>
+    <div class="category-box">📕 Lịch sử</div>
+    <div class="category-box">📗 Tâm lý - Kỹ năng</div>
+    <div class="category-box">📓 Văn học</div>
+    <div class="category-box">📒 Công nghệ</div>
+    <div class="category-box">📙 Thiếu nhi</div>
+    <div class="category-box">📔 Tiểu sử - Hồi ký</div>
+  </div>
+</div>
+
+<script>
+  {% comment %} const table = document.getElementById('borrowTable');
+  let selectedRow = null;
+
+  // Bắt sự kiện click chọn dòng
+  table.querySelectorAll('tbody tr').forEach(row => {
+    row.addEventListener('click', () => {
+      // Bỏ chọn dòng trước nếu có
+      if(selectedRow) {
+        selectedRow.style.backgroundColor = '';
+      }
+      // Chọn dòng hiện tại
+      selectedRow = row;
+      selectedRow.style.backgroundColor = '#3399ff'; 
+    });
+  });
+
+  // Xử lý nút Xóa
+  document.getElementById('deleteBtn').addEventListener('click', () => {
+    if(selectedRow) {
+      selectedRow.remove();
+      selectedRow = null;
+    } else {
+      alert('Vui lòng chọn một dòng để xóa.');
+    }
+  }); {% endcomment %}
+  const table = document.getElementById('borrowTable');
+let selectedRow = null;
+
+// Chọn dòng khi click
+table.querySelectorAll('tbody tr').forEach(row => {
+  row.addEventListener('click', () => {
+    if (selectedRow) selectedRow.style.backgroundColor = '';
+    selectedRow = row;
+    selectedRow.style.backgroundColor = '#3399ff';
+  });
+});
+
+// Xử lý nút Xóa
+document.getElementById('deleteBtn').addEventListener('click', () => {
+  if (!selectedRow) {
+    alert('Vui lòng chọn một dòng để xóa.');
+    return;
+  }
+  const maSach = selectedRow.cells[0].innerText;
+
+  fetch("{% url 'xoa_lich_su' %}", {
+    method: 'POST',
+    headers: { 'X-CSRFToken': '{{ csrf_token }}' },
+    body: new URLSearchParams({ ma_sach: maSach })
+  })
+    .then(res => res.json())
+    .then(data => {
+      if (data.status === 'success') {
+        alert("✅ Đã xóa thành công.");
+        selectedRow.remove();
+        selectedRow = null;
+      } else {
+        alert("❌ Xóa thất bại.");
+      }
+    });
+});
+
+// Hiện / Ẩn form thêm
+const addForm = document.getElementById('addForm');
+document.getElementById('showAddFormBtn').addEventListener('click', () => {
+  addForm.style.display = 'block';
+});
+document.getElementById('cancelAdd').addEventListener('click', () => {
+  addForm.style.display = 'none';
+});
+
+// Gửi form thêm
+document.getElementById('submitAdd').addEventListener('click', () => {
+  const ma_sach = document.getElementById('ma_sach').value;
+  const ten_sach = document.getElementById('ten_sach').value;
+  const ten_khach = document.getElementById('ten_khach').value;
+  const ngay_muon = document.getElementById('ngay_muon').value;
+  const ngay_tra = document.getElementById('ngay_tra').value;
+  const so_luong = document.getElementById('so_luong').value;
+
+  fetch("{% url 'them_lich_su' %}", {
+    method: 'POST',
+    headers: { 'X-CSRFToken': '{{ csrf_token }}' },
+    body: new URLSearchParams({ ma_sach, ten_sach, ten_khach_hang: ten_khach, ngay_muon, ngay_tra, so_luong })
+  })
+    .then(res => res.json())
+    .then(data => {
+      if (data.status === 'success') {
+        alert("✅ Thêm thành công!");
+        location.reload();
+      } else {
+        alert("❌ Thêm thất bại: " + (data.message || 'Kiểm tra dữ liệu.'));
+      }
+    });
+});
+</script>
+    <div class="section">
+         
+  <h2>Sách nổi bật</h2>
+  <div class="book-grid">
+      <div class="book-box">
+  <img src="{% static 'user1/images/images/Untitled-2.png' %}" alt="Bìa sách 1">
+  <h3>Dấn thân</h3>
+  <p>Cuốn sách truyền cảm hứng về sự nghiệp và cuộc sống.</p>
+  <button>Đọc sách</button>
+</div>
+
+<div class="book-box">
+  <img src="{% static 'user1/images/24.jpg' %}" alt="Bìa sách 2">
+  <h3>Nhà giả kim</h3>
+  <p>Hành trình theo đuổi ước mơ của chàng trai chăn cừu.</p>
+  <button>Đọc sách</button>
+</div>
+
+<div class="book-box">
+  <img src="{% static 'user1/images/images/Untitled-1.png' %}" alt="Bìa sách 3">
+  <h3>Chuông</h3>
+  <p>Câu chuyện tuổi thơ sâu lắng ở làng quê Việt Nam.</p>
+  <button>Đọc sách</button>
+</div>
+
+<div class="book-box">
+  <img src="{% static 'user1/images/images/Untitled-4.png' %}" alt="Bìa sách 4">
+  <h3>Đắc nhân tâm</h3>
+  <p>Bí quyết xây dựng các mối quan hệ thành công.</p>
+  <button>Đọc sách</button>
+</div>
+
+<div class="book-box">
+  <img src="{% static 'user1/images/images/Untitled-3.png' %}" alt="Bìa sách 5">
+  <h3>Tuổi trẻ đáng giá bao nhiêu</h3>
+  <p>Cẩm nang để tận hưởng và phát triển bản thân.</p>
+  <button>Đọc sách</button>
+</div>
+
+<div class="book-box">
+  <img src="{% static 'user1/images/images/Untitled-19.png' %}" alt="Bìa sách 6">
+  <h3>Sapiens</h3>
+  <p>Lược sử loài người qua các thời kỳ phát triển.</p>
+  <button>Đọc sách</button>
+</div>
+
+<div class="book-box">
+  <img src="{% static 'user1/images/images/Untitled-8.png' %}" alt="Bìa sách 7">
+  <h3>Cha giàu cha nghèo</h3>
+  <p>Bí quyết làm giàu và quản lý tài chính cá nhân.</p>
+  <button>Đọc sách</button>
+</div>
+
+<div class="book-box">
+  <img src="{% static 'user1/images/images/Untitled-9.png' %}" alt="Bìa sách 8">
+  <h3>Thiên nga đen</h3>
+  <p>Khám phá cách suy nghĩ của những người thành đạt.</p>
+  <button>Đọc sách</button>
+</div>
+
+<div class="book-box">
+  <img src="{% static 'user1/images/images/Untitled-5.png' %}" alt="Bìa sách 9">
+  <h3>7 thói quen để thành đạt</h3>
+  <p>Tiếp tục hành trình tìm kiếm ước mơ và chân lý.</p>
+  <button>Đọc sách</button>
+</div>
+
+<div class="book-box">
+  <img src="{% static 'user1/images/images/Untitled-6.png' %}" alt="Bìa sách 10">
+  <h3>Tư duy nhanh - chậm</h3>
+  <p>Những bài học giúp bạn vươn tới đỉnh cao.</p>
+  <button>Đọc sách</button>
+</div>
+
+<div class="book-box">
+  <img src="{% static 'user1/images/images/Untitled-7.png' %}" alt="Bìa sách 11">
+  <h3>Quẳng gánh lo đi</h3>
+  <p>Phân tích hành vi và suy nghĩ tập thể của con người.</p>
+  <button>Đọc sách</button>
+</div>
+
+<div class="book-box">
+  <img src="{% static 'user1/images/images/Untitled-10.png' %}" alt="Bìa sách 12">
+  <h3>Từ tốt đến vĩ đại</h3>
+  <p>Chia sẻ những trải nghiệm về triết học phương Đông.</p>
+  <button>Đọc sách</button>
+</div>
+
+<div class="book-box">
+  <img src="{% static 'user1/images/images/Untitled-11.png' %}" alt="Bìa sách 13">
+  <h3>Tuần làm việc 4 giờ</h3>
+  <p>Thời gian làm việc đạt hiệu quả trong tuần.</p>
+  <button>Đọc sách</button>
+</div>
+
+<div class="book-box">
+  <img src="{% static 'user1/images/images/Untitled-12.png' %}" alt="Bìa sách 14">
+  <h3>Chợp mắt</h3>
+  <p>Giấc ngủ ngắn chất lượng có thể cải thiện sức khỏe.</p>
+  <button>Đọc sách</button>
+</div>
+
+<div class="book-box">
+  <img src="{% static 'user1/images/images/Untitled-13.png' %}" alt="Bìa sách 15">
+  <h3>Ngưng lãng phí thời gian</h3>
+  <p>Hướng dẫn tập trung và quản lý thời gian.</p>
+  <button>Đọc sách</button>
+</div>
+
+<div class="book-box">
+  <img src="{% static 'user1/images/images/Untitled-14.png' %}" alt="Bìa sách 16">
+  <h3>Sống hạnh phúc</h3>
+  <p>Chia sẻ cách tìm sự hài hòa giữa công việc và cuộc sống.</p>
+  <button>Đọc sách</button>
+</div>
+
+<div class="book-box">
+  <img src="{% static 'user1/images/images/Untitled-15.png' %}" alt="Bìa sách 17">
+  <h3>Harry Potter</h3>
+  <p>Harry Potter chiến đấu chống Voldemort bảo vệ thế giới phép thuật.</p>
+  <button>Đọc sách</button>
+</div>
+
+<div class="book-box">
+  <img src="{% static 'user1/images/images/Untitled-16.png' %}" alt="Bìa sách 18">
+  <h3>Khoảng khắc thức tỉnh</h3>
+  <p>Giúp nhận ra bản ngã và sống tỉnh thức.</p>
+  <button>Đọc sách</button>
+</div>
+
+<div class="book-box">
+  <img src="{% static 'user1/images/images/Untitled-17.png' %}" alt="Bìa sách 19">
+  <h3>Vũ trụ</h3>
+  <p>Giải mã vũ trụ qua thuyết tương đối và lượng tử.</p>
+  <button>Đọc sách</button>
+</div>
+
+<div class="book-box">
+  <img src="{% static 'user1/images/images/Untitled-18.png' %}" alt="Bìa sách 20">
+  <h3>Lược sử thời gian</h3>
+  <p>Giải thích nguồn gốc và cấu trúc vũ trụ.</p>
+  <button>Đọc sách</button>
+</div>
+
+<div class="book-box">
+  <img src="{% static 'user1/images/images/Untitled-20.png' %}" alt="Bìa sách 21">
+  <h3>Lược sử tương lai</h3>
+  <p>Dự báo tương lai nhân loại và thế giới.</p>
+  <button>Đọc sách</button>
+</div>
+
+<div class="book-box">
+  <img src="{% static 'user1/images/images/Untitled-21.png' %}" alt="Bìa sách 22">
+  <h3>Đi tìm lẽ sống</h3>
+  <p>Tìm ý nghĩa và mục đích cuộc sống.</p>
+  <button>Đọc sách</button>
+</div>
+
+<div class="book-box">
+  <img src="{% static 'user1/images/images/Untitled-23.png' %}" alt="Bìa sách 23">
+  <h3>Bên thắng cuộc</h3>
+  <p>Kể câu chuyện đấu tranh và chiến thắng.</p>
+  <button>Đọc sách</button>
+</div>
+
+<div class="book-box">
+  <img src="{% static 'user1/images/images/Untitled-24.png' %}" alt="Bìa sách 24">
+  <h3>The Pragmatic</h3>
+  <p>Phát triển phần mềm hiệu quả và thực tế.</p>
+  <button>Đọc sách</button>
+</div>
+
+<div class="book-box">
+  <img src="{% static 'user1/images/images/Untitled-25.png' %}" alt="Bìa sách 25">
+  <h3>Tư duy truy tìm sự thật</h3>
+  <p>Hiểu cảm xúc, sống thật với bản thân.</p>
+  <button>Đọc sách</button>
+</div>
+
+<div class="book-box">
+  <img src="{% static 'user1/images/images/Untitled-27.png' %}" alt="Bìa sách 26">
+  <h3>The Daily Stoic</h3>
+  <p>Sống khôn ngoan và điềm tĩnh mỗi ngày.</p>
+  <button>Đọc sách</button>
+</div>
+
+<div class="book-box">
+  <img src="{% static 'user1/images/images/Untitled-28.png' %}" alt="Bìa sách 27">
+  <h3>ALGORITHMS</h3>
+  <p>Giải thích cách thiết kế và phân tích thuật toán hiệu quả.</p>
+  <button>Đọc sách</button>
+</div>
+
+<div class="book-box">
+  <img src="{% static 'user1/images/images/Untitled-29.png' %}" alt="Bìa sách 28">
+  <h3>Search</h3>
+  <p>Hành trình khám phá khoa học và con người.</p>
+  <button>Đọc sách</button>
+</div>
+
+<div class="book-box">
+  <img src="{% static 'user1/images/images/Untitled-30.png' %}" alt="Bìa sách 29">
+  <h3>Clean code</h3>
+  <p>Dạy cách viết mã nguồn rõ ràng, dễ đọc và bảo trì.</p>
+  <button>Đọc sách</button>
+</div>
+
+<div class="book-box">
+  <img src="{% static 'user1/images/images/Untitled-33.png' %}" alt="Bìa sách 30">
+  <h3>The Ocean</h3>
+  <p>Kết nối sâu sắc giữa con người và biển.</p>
+  <button>Đọc sách</button>
+</div>
+  </div>
+  <script>
+    function searchBook() {
+      const query = document.getElementById('searchInput').value.trim().toLowerCase();
+
+      // Xóa class 'found' ở tất cả tiêu đề sách trước
+      document.querySelectorAll('.book-grid h3').forEach(el => {
+        el.classList.remove('found');
+      });
+
+      if (!query) {
+        alert("Vui lòng nhập tên sách để tìm kiếm!");
+        return;
+      }
+
+      // Tìm các tiêu đề sách và so sánh
+      const titles = document.querySelectorAll('.book-grid h3');
+      let found = false;
+
+      titles.forEach(title => {
+        if (title.textContent.trim().toLowerCase() === query) {
+          title.classList.add('found');
+          title.scrollIntoView({behavior: "smooth", block: "center"});
+          alert("Đã tìm thấy sách: " + title.textContent);
+          found = true;
+        }
+      });
+
+      if (!found) {
+        alert("Không tìm thấy sách!");
+      }
+    }
+  </script>
+</div>
+<footer>
+      <div class="footer-row">
+        <div>
+          <h4>About</h4>
+          <p>About GTDLL</p>
+          <p>How it works</p>
+          <p>Careers</p>
+        </div>
+        <div>
+          <h4>Partner with us</h4>
+          <p>Affiliate program</p>
+          <p>Promotions</p>
+        </div>
+        <div>
+          <h4>Support</h4>
+          <p>Help Center</p>
+          <p>Feedback</p>
+        </div>
+        <div>
+          <h4>Get the app</h4>
+          <img src="{% static 'user1/images/app.jpg' %}" alt="App Store">
+          <img src="{% static 'user1/images/gg.jpg' %}" alt="Google Play">
+        </div>
+      </div>
+      <p class="copyright">© 2025 GTDLL Incorporated</p>
+    </footer>
+  </div>
+
+  <style>
+    .category-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      padding: 20px;
+    }
+
+    .category-box {
+      background-color: #444;
+      color: white;
+      text-align: center;
+      padding: 30px 10px;
+      border-radius: 10px;
+      font-size: 18px;
+      font-weight: bold;
+      transition: background-color 0.3s;
+      cursor: pointer;
+    }
+
+    .category-box:hover {
+      background-color: #666;
+    }
+
+    .sidebar ul li a {
+      text-decoration: none;
+      color: white;
+      display: block;
+      padding: 8px;
+      border-radius: 6px;
+    }
+
+    .sidebar ul li a:hover {
+      background-color: #1b0cc3;
+    }
+
+    .sidebar ul li.active a {
+      background-color: #0f34db;
+    }
+    .book-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 25px;
+  padding: 20px;
+}
+
+.book-box {
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  text-align: center;
+  padding: 15px;
+  transition: transform 0.2s;
+}
+
+.book-box:hover {
+  transform: translateY(-5px);
+}
+
+.book-box img {
+  width: 100%;
+  height: auto;
+  border-radius: 6px;
+}
+
+.book-box h3 {
+  margin: 10px 0 5px;
+  font-size: 1.1em;
+  color: #333;
+}
+  .book-box h3.found {
+      color: #0f34db; /* màu xanh dương khi tìm thấy */
+      font-weight: bold;
+    }
+
+.book-box p {
+  font-size: 0.95em;
+  color: #666;
+  margin-bottom: 10px;
+}
+
+.book-box button {
+  background-color: #4a6c6f;
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.book-box button:hover {
+  background-color: #3a5557;
+}
+
+  </style>
+</body>
+</html>
